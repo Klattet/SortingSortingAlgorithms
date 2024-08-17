@@ -2,12 +2,19 @@ import std/random
 import std/times
 import std/strformat
 
-import algorithms/bubble_sort
-import algorithms/insertion_sort
+import algorithms/bubble_sort_impl
+import algorithms/heap_sort_impl
+import algorithms/insertion_sort_impl
+import algorithms/intro_sort_impl
+import algorithms/quick_sort_impl
+
 
 const algos = [
-    ("Insertion sort", insertion_sorter),
-    ("Bubble sort", bubble_sorter),
+    ("Bubble sort", bubble_sort),
+    ("Heap sort", heap_sort),
+    ("Insertion sort", insertion_sort),
+    ("Intro sort", intro_sort),
+    ("Quick sort", quick_sort),
 ]
 
 # HELPER FUNCTIONS
@@ -18,6 +25,14 @@ proc make_seq(length: int, max: int, seed: int): seq[int] =
     
     for _ in 1 .. length:
         sequence.add(rand(max))
+    
+    return sequence
+
+proc make_seq_non_rand(length: int): seq[int] =
+    var sequence: seq[int] = @[]
+    
+    for i in countdown(length, 1):
+        sequence.add(i)
     
     return sequence
 
@@ -32,7 +47,8 @@ func is_sorted(sequence: seq[int]): bool =
 proc test_all(): void =
     const length = 10_000
     const max = 100_000
-    const seed = 1234567890
+    #const seed = 1234567890
+    let seed = rand(1_000_000)
     
     const test_cycles = 10
     
@@ -44,6 +60,10 @@ proc test_all(): void =
     echo "Generating random sequence."
     let random_sequence = make_seq(length, max, seed)
     echo "Finished generating random sequence.\n"
+    
+    #echo "Generating non-random sequence."
+    #let random_sequence = make_seq_non_rand(length)
+    #echo "Finished generating non-random sequence.\n"
     
     for algo_name, algo_function in algos.items():
         echo &"Sorting using \"{algo_name}\""

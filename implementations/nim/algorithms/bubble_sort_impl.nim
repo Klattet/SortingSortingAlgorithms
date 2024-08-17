@@ -1,6 +1,6 @@
 import ../swaps
 
-proc bubble_sorter*(sequence: var seq[int]): void =
+proc bubble_sort*(sequence: var seq[int]): void =
     for i in 1 ..< sequence.len:
         var swapped = false
         for j in 1 .. sequence.len - i:
