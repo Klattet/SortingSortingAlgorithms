@@ -21,5 +21,4 @@ proc heap_sort*(sequence: var seq[int]): void =
     
     for i in countdown(sequence.len - 1, 0):
         swap(sequence, 0, i)
-        
         heapify(sequence, i, 0)

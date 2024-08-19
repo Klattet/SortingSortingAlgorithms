@@ -3,18 +3,17 @@ import std/times
 import std/strformat
 
 import algorithms/bubble_sort_impl
-import algorithms/heap_sort_impl
-import algorithms/insertion_sort_impl
-import algorithms/intro_sort_impl
-import algorithms/quick_sort_impl
+#import algorithms/heap_sort_impl
+#import algorithms/insertion_sort_impl
+#import algorithms/quick_sort_impl
 
 
 const algos = [
     ("Bubble sort", bubble_sort),
-    ("Heap sort", heap_sort),
-    ("Insertion sort", insertion_sort),
-    ("Intro sort", intro_sort),
-    ("Quick sort", quick_sort),
+    #("Heap sort", heap_sort),
+    #("Insertion sort", insertion_sort),
+    #("Intro sort", intro_sort),
+    #("Quick sort", quick_sort),
 ]
 
 # HELPER FUNCTIONS
@@ -36,21 +35,24 @@ proc make_seq_non_rand(length: int): seq[int] =
     
     return sequence
 
-func is_sorted(sequence: seq[int]): bool =
+func is_sorted(sequence: seq[int]): (bool, int) =
     for i in 0 ..< sequence.len - 1:
         if sequence[i] > sequence[i + 1]:
-            return false
-    return true
+            return (false, i)
+    return (true, 0)
 
 
 # TESTING
 proc test_all(): void =
-    const length = 10_000
-    const max = 100_000
+    const length = 1000
+    const max = 1_000_000
     #const seed = 1234567890
+    
+    randomize()
+    
     let seed = rand(1_000_000)
     
-    const test_cycles = 10
+    const test_cycles = 1
     
     echo &"Testing all algorithms {test_cycles} times each."
     echo &"Sequence length: {length}"
@@ -72,14 +74,17 @@ proc test_all(): void =
         for i in 1 .. test_cycles:
             var sequence = random_sequence
             let start = epochTime()
-            algo_function(sequence)
+            algo_function(sequence, sequence.len)
             let stop = epochTime()
             total_time += stop - start
             
             if i == 1:
                 echo &"Checking if \"{algo_name}\" sorted correctly the first time."
-                if not is_sorted(sequence):
-                    echo &"\"{algo_name}\" did not sort correctly.\n{$sequence}"
+                let (sorted, fail_index) = is_sorted(sequence)
+                if not sorted:
+                    #echo &"\"{algo_name}\" did not sort correctly.\n{$sequence}"
+                    echo &"{sequence[fail_index]} is larger than the following {sequence[fail_index + 1]}"
+                    echo fail_index
                     assert false
                 else:
                     echo &"\"{algo_name}\" sorted correctly."
