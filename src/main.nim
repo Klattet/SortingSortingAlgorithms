@@ -6,22 +6,23 @@ import std/algorithm
 import algorithms/bubble_sort_impl
 import algorithms/heap_sort_impl
 import algorithms/insertion_sort_impl
+import algorithms/intro_sort_impl
 import algorithms/quick_sort_impl
 
 
 const algos = [
-    ("Naive bubble sort", naive_bubble_sort),
-    ("Optimised bubble sort", optimised_bubble_sort),
+    #("Naive bubble sort", naive_bubble_sort),
+    #("Optimised bubble sort", optimised_bubble_sort),
     ("Heap sort recursive", heap_sort_rec),
     ("Heap sort iterative", heap_sort_iter),
-    ("Insertion sort", insertion_sort),
-    ("Binary insertion sort", binary_insertion_sort),
-    #("Intro sort", intro_sort),
+    #("Insertion sort", insertion_sort),
+    #("Binary insertion sort", binary_insertion_sort),
+    ("Intro sort", intro_sort),
     ("Quick sort", quick_sort),
 ]
 
 proc test_all(): void =
-    const length = 100_000
+    const length = 1_000_000
     const max = 100_000_000
     const test_cycles = 1
     

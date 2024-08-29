@@ -1,8 +1,9 @@
 
-proc partition(sequence: var seq[int], low: int, high: int): int {.inline.} =    
+proc partition(sequence: var seq[int], low: int, high: int): int {.inline.} =
+    let pivot = sequence[high]
     var i = low
     for j in low ..< high:
-        if sequence[j] < sequence[high]:
+        if sequence[j] < pivot:
             swap(sequence[i], sequence[j])
             i += 1
     
@@ -18,7 +19,6 @@ proc sort_helper(sequence: var seq[int], low: int, high: int): void =
         sort_helper(sequence, pivot + 1, high)
 
 proc quick_sort*(sequence: var seq[int]): void =
-    if sequence.len <= 1:
-        return
-    
-    sort_helper(sequence, 0, sequence.len - 1)
+    let size = sequence.len
+    if 1 < size:
+        sort_helper(sequence, 0, size - 1)
