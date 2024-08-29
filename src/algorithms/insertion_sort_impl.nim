@@ -13,6 +13,7 @@ proc binary_insertion_sort*(sequence: var seq[int]): void =
     for i in 1 ..< sequence.len:
         let key = sequence[i]
         
+        # Binary search destination.
         var low = 0
         var high = i
         while low < high:
@@ -22,6 +23,7 @@ proc binary_insertion_sort*(sequence: var seq[int]): void =
             else:
                 low = middle + 1
         
+        # Move to position.
         var j = i
         while low < j:
             sequence[j] = sequence[j - 1];
