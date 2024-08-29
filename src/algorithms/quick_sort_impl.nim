@@ -1,13 +1,12 @@
-import ../swaps
 
 proc partition(sequence: var seq[int], low: int, high: int): int {.inline.} =    
     var i = low
     for j in low ..< high:
         if sequence[j] < sequence[high]:
-            swap(sequence, i, j)
+            swap(sequence[i], sequence[j])
             i += 1
     
-    swap(sequence, i, high)
+    swap(sequence[i], sequence[high])
     return i
 
 proc sort_helper(sequence: var seq[int], low: int, high: int): void =

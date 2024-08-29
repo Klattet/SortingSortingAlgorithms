@@ -14,7 +14,7 @@ proc heapify(sequence: var seq[int], size: int, index: int): void =
         swap(sequence[index], sequence[largest]) 
         heapify(sequence, size, largest)
 
-proc heap_sort*(sequence: var seq[int]): void =
+proc heap_sort_rec*(sequence: var seq[int]): void =
     let size = sequence.len
     for i in countdown(size div 2 - 1, 0):
         heapify(sequence, size, i)
@@ -23,35 +23,45 @@ proc heap_sort*(sequence: var seq[int]): void =
         swap(sequence[0], sequence[i])
         heapify(sequence, i, 0)
 
-
-proc buildMaxHeap(sequence: var seq[int], size: int): void =
-    for i in 0 ..< size:
-        if sequence[i] > sequence[(i - 1) div 2]:
-            var j = i
-
-            while sequence[j] > sequence[(j - 1) div 2]:
-                swap(sequence[j], sequence[(j - 1) div 2])
-                j = (j - 1) div 2
-
 proc heap_sort_iter*(sequence: var seq[int]): void =
     let size = sequence.len
-    buildMaxHeap(sequence, size)
-  
-    for i in countdown(size - 1, 1):
-        swap(sequence[0], sequence[i])
-        
-        var j = 0
-        var index = 0
-        
+    if 1 < size:
+    
+        var j = 1
+        var i = 1
+        var child = 0
         while true:
-            index = 2 * j + 1
+            while sequence[j] > sequence[child]:
+                swap(sequence[j], sequence[child])
+                j = child
+                child = (j - 1) div 2
             
-            if index < (i - 1) and sequence[index] < sequence[index + 1]:
-                index += 1
+            child = i div 2
+            i += 1
+            if i == size:
+                break
+            j = i
+    
+        i -= 1
+        while true:
+            swap(sequence[0], sequence[i])
+            
+            j = 0
+            var index = 1
+        
+            while true:
+                if index < (i - 1) and sequence[index] < sequence[index + 1]:
+                    index += 1
 
-            if index < i and sequence[j] < sequence[index]:
-                swap(sequence[j], sequence[index])
+                if index < i and sequence[j] < sequence[index]:
+                    swap(sequence[j], sequence[index])
             
-            j = index  
-            if index >= i: 
+                if index >= i:
+                    break
+            
+                j = index
+                index = 2 * j + 1
+            
+            i -= 1
+            if 0 == i:
                 break
