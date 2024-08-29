@@ -57,15 +57,15 @@ proc sort_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): vo
     let delta = stop - start
     
     if delta < 20:
-        binary_insertion_sort(sequence, start, stop)
+        binary_insertion_sort(sequence, start, stop + 1)
     elif cutoff == 0:
-        heap_sort(sequence, start, stop)
+        heap_sort(sequence, start, stop + 1)
     else:
-        let pivot = partition(sequence, start, stop)
+        let pivot = partition(sequence, start, stop + 1)
         
         sort_helper(sequence, start, pivot - 1, cutoff - 1)
-        sort_helper(sequence, pivot + 1, stop - 1, cutoff - 1)
+        sort_helper(sequence, pivot + 1, stop, cutoff - 1)
 
 proc intro_sort*(sequence: var seq[int]): void =
     let size = sequence.len
-    sort_helper(sequence, 0, size, 2 * int(log2(float(size))))
+    sort_helper(sequence, 0, size - 1, 2 * int(log2(float(size))))
