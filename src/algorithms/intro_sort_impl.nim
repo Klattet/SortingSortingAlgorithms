@@ -53,19 +53,19 @@ proc partition(sequence: var seq[int], low: int, high: int): int {.inline.} =
     swap(sequence[i], sequence[high - 1])
     return i
 
-proc sort_helper(sequence: var seq[int], low: int, high: int, cutoff: int): void =
-    let delta = high - low
+proc sort_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): void =
+    let delta = stop - start
     
-    if delta < 30:
-        binary_insertion_sort(sequence, low, high + 1)
+    if delta < 20:
+        binary_insertion_sort(sequence, start, stop)
     elif cutoff == 0:
-        heap_sort(sequence, low, high + 1)
+        heap_sort(sequence, start, stop)
     else:
-        let pivot = partition(sequence, low, high + 1)
+        let pivot = partition(sequence, start, stop)
         
-        sort_helper(sequence, low, pivot - 1, cutoff - 1)
-        sort_helper(sequence, pivot + 1, high, cutoff - 1)
+        sort_helper(sequence, start, pivot - 1, cutoff - 1)
+        sort_helper(sequence, pivot + 1, stop - 1, cutoff - 1)
 
 proc intro_sort*(sequence: var seq[int]): void =
     let size = sequence.len
-    sort_helper(sequence, 0, size - 1, 2 * int(log2(float(size))))
+    sort_helper(sequence, 0, size, 2 * int(log2(float(size))))
