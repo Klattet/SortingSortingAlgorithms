@@ -14,8 +14,8 @@ const algos = [
     #("Standard bubble sort", standard_bubble_sort),
     #("Optimised bubble sort", optimised_bubble_sort),
     
-    ("Recursive heap sort", recursive_heap_sort),
-    ("Iterative heap sort", iterative_heap_sort),
+    #("Recursive heap sort", recursive_heap_sort),
+    #("Iterative heap sort", iterative_heap_sort),
     
     #("Insertion sort", insertion_sort),
     #("Binary insertion sort", binary_insertion_sort),
