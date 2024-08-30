@@ -73,41 +73,29 @@ proc iterative_heap_sort*(sequence: var seq[int]): void =
     if size < 2:
         return
     
-    var j = 1
-    var i = 1
-    var child = 0
-    while true:
-        while sequence[j] > sequence[child]:
-            swap(sequence[j], sequence[child])
-            j = child
-            child = (j - 1) div 2
-            
-        child = i div 2
-        i += 1
-        if i == size:
-            break
-        j = i
-
-    i -= 1
-    while true:
+    # Construct max heap.
+    for i in 1 ..< size:
+        var parent = (i - 1) div 2
+        var j = i
+        while sequence[j] > sequence[parent]:
+            swap(sequence[j], sequence[parent])
+            j = parent
+            parent = (j - 1) div 2
+    
+    # Extract largest and restore heap.
+    for i in countdown(size - 1, 1):
         swap(sequence[0], sequence[i])
         
-        j = 0
-        var index = 1
-    
+        var j = 0
         while true:
-            if index < (i - 1) and sequence[index] < sequence[index + 1]:
-                index += 1
-
-            if index < i and sequence[j] < sequence[index]:
-                swap(sequence[j], sequence[index])
+            var child = 2 * j + 1
             
-            if index >= i:
+            if child < (i - 1) and sequence[child] < sequence[child + 1]:
+                child += 1
+            
+            if child < i and sequence[j] < sequence[child]:
+                swap(sequence[j], sequence[child])
+            
+            if child >= i:
                 break
-            
-            j = index
-            index = 2 * j + 1
-            
-        i -= 1
-        if 0 == i:
-            break
+            j = child
