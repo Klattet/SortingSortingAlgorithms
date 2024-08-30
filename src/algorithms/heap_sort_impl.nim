@@ -16,7 +16,7 @@
 # Best:    O(n * log(n))
 # Worst:   O(n * log(n))
 #
-# Space: (Version dependent)
+# Space:
 # Average: O(1) or O(log(n))
 # Best:    O(1) or O(log(n))
 # Worst:   O(1) or O(log(n))

@@ -33,7 +33,7 @@
 
 # STANDARD IMPLEMENTATION
 # The most common implementation.
-proc insertion_sort*(sequence: var seq[int]): void =
+proc standard_insertion_sort*(sequence: var seq[int]): void =
     for i in 1 ..< sequence.len:
         let key = sequence[i]
         

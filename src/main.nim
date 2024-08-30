@@ -17,14 +17,20 @@ const algos = [
     #("Recursive heap sort", recursive_heap_sort),
     #("Iterative heap sort", iterative_heap_sort),
     
-    #("Insertion sort", insertion_sort),
+    #("Standard insertion sort", standard_insertion_sort),
     #("Binary insertion sort", binary_insertion_sort),
-    #("Intro sort", intro_sort),
-    #("Quick sort", quick_sort),
+    
+    ("Standard intro sort", standard_intro_sort),
+    ("Binary intro sort", binary_intro_sort),
+    ("Median of three intro sort", median_intro_sort),
+    ("Binary search median of three intro sort", binary_median_intro_sort),
+    
+    #("Standard quick sort", standard_quick_sort),
+    #("Median of three quick sort", median_quick_sort),
 ]
 
 proc test_all(): void =
-    const length = 1000_000
+    const length = 10_000_000
     const max = 100_000_000
     const test_cycles = 1
     
