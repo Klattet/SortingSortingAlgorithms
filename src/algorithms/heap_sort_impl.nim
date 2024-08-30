@@ -1,67 +1,113 @@
 
+# HEAP SORT
+# Family: Selection
+#
+# In-place: YES
+# Stable:   NO
+# Adaptive: NO
+#
+# Comparisons:
+# Average: O(n * log(n))
+# Best:    O(n * log(n))
+# Worst:   O(n * log(n))
+#
+# Swaps:
+# Average: O(n * log(n))
+# Best:    O(n * log(n))
+# Worst:   O(n * log(n))
+#
+# Space: (Version dependent)
+# Average: O(1) or O(log(n))
+# Best:    O(1) or O(log(n))
+# Worst:   O(1) or O(log(n))
+#
+# Description:
+# Heap sort is an efficient sorting algorithm that works by converting a list into a max heap.
+# The largest element is repeatedly "extracted" and swapped with the last element in the unsorted section, thereby placing it in its correct sorted position.
+# The heap property is then restored in the unsorted section to find the next largest element.
+# This process continues until the list is sorted.
+#
+# Although heap sort is generally slower than competitors like quick sort, it is still one of the fastest known sorting algorithms.
+# It is often perferred over quick sort because of its consistent time complexity regardless of the shape of the data, avoiding quick sort's worst case.
+#
+# Heap sort can be classified as a variant of 
+
+{.experimental: "codeReordering".}
+
+# RECURSIVE IMPLEMENTATION
+# The simplest version to implement.
+# Uses additional space to store (log(n)) function stack frames.
+proc recursive_heap_sort*(sequence: var seq[int]): void =
+    let size = sequence.len
+    if size < 2:
+        return
+    
+    # Construct max heap.
+    for i in countdown(size div 2 - 1, 0): # Last half will be sorted by the time half of the list is sorted.
+        heapify(sequence, size, i)
+    
+    # Extract largest and restore heap.
+    for i in countdown(size - 1, 0):
+        swap(sequence[0], sequence[i])
+        heapify(sequence, i, 0)
+
+# Ensure heap property.
 proc heapify(sequence: var seq[int], size: int, index: int): void =
     let left = 2 * index + 1
     let right = 2 * index + 2
-    
     var largest = index
     
     if left < size and sequence[left] > sequence[largest]:
             largest = left
     if right < size and sequence[right] > sequence[largest]:
             largest = right
-    
     if largest != index:
         swap(sequence[index], sequence[largest]) 
         heapify(sequence, size, largest)
 
-proc heap_sort_rec*(sequence: var seq[int]): void =
+
+# ITERATIVE IMPLEMENTATION
+# Implementations that are iterative in nature tend to be faster than recursive implementations as they avoid allocating extra memory that is not needed.
+proc iterative_heap_sort*(sequence: var seq[int]): void =
     let size = sequence.len
-    for i in countdown(size div 2 - 1, 0):
-        heapify(sequence, size, i)
+    if size < 2:
+        return
     
-    for i in countdown(size - 1, 0):
+    var j = 1
+    var i = 1
+    var child = 0
+    while true:
+        while sequence[j] > sequence[child]:
+            swap(sequence[j], sequence[child])
+            j = child
+            child = (j - 1) div 2
+            
+        child = i div 2
+        i += 1
+        if i == size:
+            break
+        j = i
+
+    i -= 1
+    while true:
         swap(sequence[0], sequence[i])
-        heapify(sequence, i, 0)
-
-proc heap_sort_iter*(sequence: var seq[int]): void =
-    let size = sequence.len
-    if 1 < size:
-    
-        var j = 1
-        var i = 1
-        var child = 0
-        while true:
-            while sequence[j] > sequence[child]:
-                swap(sequence[j], sequence[child])
-                j = child
-                child = (j - 1) div 2
-            
-            child = i div 2
-            i += 1
-            if i == size:
-                break
-            j = i
-    
-        i -= 1
-        while true:
-            swap(sequence[0], sequence[i])
-            
-            j = 0
-            var index = 1
         
-            while true:
-                if index < (i - 1) and sequence[index] < sequence[index + 1]:
-                    index += 1
+        j = 0
+        var index = 1
+    
+        while true:
+            if index < (i - 1) and sequence[index] < sequence[index + 1]:
+                index += 1
 
-                if index < i and sequence[j] < sequence[index]:
-                    swap(sequence[j], sequence[index])
+            if index < i and sequence[j] < sequence[index]:
+                swap(sequence[j], sequence[index])
             
-                if index >= i:
-                    break
-            
-                j = index
-                index = 2 * j + 1
-            
-            i -= 1
-            if 0 == i:
+            if index >= i:
                 break
+            
+            j = index
+            index = 2 * j + 1
+            
+        i -= 1
+        if 0 == i:
+            break

@@ -9,12 +9,14 @@ import algorithms/insertion_sort_impl
 import algorithms/intro_sort_impl
 import algorithms/quick_sort_impl
 
-
 const algos = [
-    ("Naive bubble sort", naive_bubble_sort),
-    ("Optimised bubble sort", optimised_bubble_sort),
-    #("Heap sort recursive", heap_sort_rec),
-    #("Heap sort iterative", heap_sort_iter),
+    #("Naive bubble sort", naive_bubble_sort),
+    #("Standard bubble sort", standard_bubble_sort),
+    #("Optimised bubble sort", optimised_bubble_sort),
+    
+    ("Recursive heap sort", recursive_heap_sort),
+    ("Iterative heap sort", iterative_heap_sort),
+    
     #("Insertion sort", insertion_sort),
     #("Binary insertion sort", binary_insertion_sort),
     #("Intro sort", intro_sort),
@@ -22,9 +24,9 @@ const algos = [
 ]
 
 proc test_all(): void =
-    const length = 20_000
+    const length = 1000_000
     const max = 100_000_000
-    const test_cycles = 20
+    const test_cycles = 1
     
     #const seed = 1234567890
     randomize()
