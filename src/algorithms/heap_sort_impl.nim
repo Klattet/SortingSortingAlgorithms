@@ -30,7 +30,7 @@
 # Although heap sort is generally slower than competitors like quick sort, it is still one of the fastest known sorting algorithms.
 # It is often perferred over quick sort because of its consistent time complexity regardless of the shape of the data, avoiding quick sort's worst case.
 #
-# Heap sort can be classified as a variant of 
+
 
 {.experimental: "codeReordering".}
 
@@ -39,64 +39,77 @@
 # The simplest version to implement.
 # Uses additional space to store (log(n)) function stack frames.
 proc recursive_heap_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    if size < 2:
+    recursive_heap_sort_sub(sequence, 0, sequence.len)
+
+proc recursive_heap_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    if stop - start < 2:
         return
     
     # Construct max heap.
-    for i in countdown(size div 2 - 1, 0): # Last half will be sorted by the time half of the list is sorted.
-        heapify(sequence, size, i)
+    for i in countdown(stop div 2, start): # The last half will only consist of children.
+        recursive_sift_down(sequence, start, stop, i)
     
     # Extract largest and restore heap.
-    for i in countdown(size - 1, 0):
-        swap(sequence[0], sequence[i])
-        heapify(sequence, i, 0)
+    for i in countdown(stop - 1, start):
+        swap(sequence[start], sequence[i])
+        recursive_sift_down(sequence, start, i, start)
 
-# Ensure heap property.
-proc heapify(sequence: var seq[int], size: int, index: int): void =
-    let left = 2 * index + 1
-    let right = 2 * index + 2
+proc recursive_sift_down(sequence: var seq[int], start: int, stop: int, index: int): void =
     var largest = index
     
-    if left < size and sequence[left] > sequence[largest]:
-            largest = left
-    if right < size and sequence[right] > sequence[largest]:
+    let right = 2 * (index - start) + 2 + start
+    if right < stop:
+        if sequence[right] > sequence[largest]:
             largest = right
+        let left = right - 1
+        if sequence[left] > sequence[largest]:
+            largest = left
+    else:
+        let left = right - 1
+        if left < stop and sequence[left] > sequence[largest]:
+            largest = left
+    
     if largest != index:
-        swap(sequence[index], sequence[largest]) 
-        heapify(sequence, size, largest)
+        swap(sequence[index], sequence[largest])
+        recursive_sift_down(sequence, start, stop, largest)
 
 
 # ITERATIVE IMPLEMENTATION
 # Implementations that are iterative in nature tend to be faster than recursive implementations as they avoid allocating extra memory that is not needed.
 proc iterative_heap_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    if size < 2:
+    iterative_heap_sort_sub(sequence, 0, sequence.len)
+
+proc iterative_heap_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    if stop - start < 2:
         return
     
     # Construct max heap.
-    for i in 1 ..< size:
-        var parent = (i - 1) div 2
-        var j = i
-        while sequence[j] > sequence[parent]:
-            swap(sequence[j], sequence[parent])
-            j = parent
-            parent = (j - 1) div 2
+    for i in countdown(stop div 2, start): # The last half will only consist of children.
+        iterative_sift_down(sequence, start, stop, i)
     
     # Extract largest and restore heap.
-    for i in countdown(size - 1, 1):
-        swap(sequence[0], sequence[i])
+    for i in countdown(stop - 1, 1):
+        swap(sequence[start], sequence[i])
+        iterative_sift_down(sequence, start, i ,start)
+
+proc iterative_sift_down(sequence: var seq[int], start: int, stop: int, index: int): void {.inline.} =
+    var index = index
+    while true:
+        var largest = index
         
-        var j = 0
-        while true:
-            var child = 2 * j + 1
-            
-            if child < (i - 1) and sequence[child] < sequence[child + 1]:
-                child += 1
-            
-            if child < i and sequence[j] < sequence[child]:
-                swap(sequence[j], sequence[child])
-            
-            if child >= i:
-                break
-            j = child
+        let right = 2 * (index - start) + 2 + start
+        if right < stop:
+            if sequence[right] > sequence[largest]:
+                largest = right
+            let left = right - 1
+            if sequence[left] > sequence[largest]:
+                largest = left
+        else:
+            let left = right - 1
+            if left < stop and sequence[left] > sequence[largest]:
+                largest = left
+        
+        if largest == index:
+            break
+        swap(sequence[index], sequence[largest])
+        index = largest

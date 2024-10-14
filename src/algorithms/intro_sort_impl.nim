@@ -9,160 +9,119 @@
 
 {.experimental: "codeReordering".}
 
+import std/math
+
+import insertion_sort_impl
+import heap_sort_impl
+
 
 const INSERTION_LIMIT = 32 # Sublists smaller than this number in length use insertion sort.
 const DEPTH_FACTOR = 2.0 # The factor to multiply the would-be heap height with to determine the maximum recursion depth before switching to heap sort.
 
-import std/math
+
+# HELPER FUNCTIONS
+
+# Calculate the depth limit for where to switch from quicksort to heapsort.
 func depth_limit(size: int): int {.inline.} =
     return int(DEPTH_FACTOR * log2(float(size)))
+
+# Partition around the pivot value. Place pivot as the last element in the sublist.
+proc partition(sequence: var seq[int], lowest: int, highest: int): int {.inline.} =
+    let pivot = sequence[highest]
+    var i = lowest
+    for j in lowest ..< highest:
+        if sequence[j] < pivot:
+            swap(sequence[i], sequence[j])
+            i += 1
+    swap(sequence[i], sequence[highest])
+    return i
+
+# Move the median of the first, middle and last element to the end.
+proc move_median_of_three_to_end(sequence: var seq[int], lowest: int, highest: int): void {.inline.} =
+    let middle = (lowest + highest) div 2
+    if sequence[middle] < sequence[lowest]:
+        swap(sequence[lowest], sequence[middle])
+    if sequence[highest] < sequence[lowest]:
+        swap(sequence[lowest], sequence[highest])
+    if sequence[middle] < sequence[highest]:
+        swap(sequence[middle], sequence[highest])
 
 
 # STANDARD IMPLEMENTATION
 proc standard_intro_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    standard_helper(sequence, 0, size, depth_limit(size))
+    standard_intro_sort_sub(sequence, 0, sequence.len)
+
+proc standard_intro_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    standard_helper(sequence, start, stop, depth_limit(stop - start))
 
 proc standard_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): void =    
     if stop - start < INSERTION_LIMIT:
-        insertion_sort(sequence, start, stop)
+        standard_insertion_sort_sub(sequence, start, stop)
     elif cutoff == 0:
-        heap_sort(sequence, start, stop)
+        iterative_heap_sort_sub(sequence, start, stop)
     else:
-        let pivot = standard_partition(sequence, start, stop - 1)
+        let pivot = partition(sequence, start, stop - 1)
         
         standard_helper(sequence, start, pivot, cutoff - 1)
         standard_helper(sequence, pivot + 1, stop, cutoff - 1)
 
-proc insertion_sort(sequence: var seq[int], start: int, stop: int): void =
-    for i in start + 1 ..< stop:
-        let key = sequence[i]
-        
-        var j = i
-        while 0 < j and key < sequence[j - 1]:
-            sequence[j] = sequence[j - 1]
-            j -= 1
-        sequence[j] = key
-
-proc heap_sort(sequence: var seq[int], start: int, stop: int): void {.inline.} =
-    for i in countdown(stop, start):
-        heapify(sequence, start, stop, i)
-    
-    for i in countdown(stop - 1, start):
-        swap(sequence[start], sequence[i])
-        heapify(sequence, start, i, start)
-
-proc heapify(sequence: var seq[int], start: int, stop: int, index: int): void =
-    let left = 2 * (index - start) + 1 + start
-    let right = 2 * (index - start) + 2 + start
-    
-    var largest = index
-    
-    if left < stop and sequence[left] > sequence[largest]:
-            largest = left
-    if right < stop and sequence[right] > sequence[largest]:
-            largest = right
-    
-    if largest != index:
-        swap(sequence[index], sequence[largest]) 
-        heapify(sequence, start, stop, largest)
-
-proc standard_partition(sequence: var seq[int], low: int, high: int): int {.inline.} =
-    let pivot = sequence[high]
-    var i = low
-    for j in low ..< high:
-        if sequence[j] < pivot:
-            swap(sequence[i], sequence[j])
-            i += 1
-    swap(sequence[i], sequence[high])
-    return i
-
 
 # BINARY SEARCH IMPLEMENTATION
 proc binary_intro_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    binary_helper(sequence, 0, size, depth_limit(size))
+    binary_intro_sort_sub(sequence, 0, sequence.len)
+
+proc binary_intro_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    binary_helper(sequence, start, stop, depth_limit(stop - start))
 
 proc binary_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): void =    
     if stop - start < INSERTION_LIMIT:
-        binary_insertion_sort(sequence, start, stop)
+        binary_insertion_sort_sub(sequence, start, stop)
     elif cutoff == 0:
-        heap_sort(sequence, start, stop)
-    else:
-        let pivot = standard_partition(sequence, start, stop - 1)
+        iterative_heap_sort_sub(sequence, start, stop)
+    else:        
+        let pivot = partition(sequence, start, stop - 1)
         
-        binary_helper(sequence, start, pivot, cutoff - 1)
-        binary_helper(sequence, pivot + 1, stop, cutoff - 1)
-
-proc binary_insertion_sort(sequence: var seq[int], start: int, stop: int): void =
-    for i in start + 1 ..< stop:
-        let key = sequence[i]
-        
-        var low = start
-        var high = i
-        while low < high:
-            let middle = (low + high) div 2
-            if key < sequence[middle]:
-                high = middle
-            else:
-                low = middle + 1
-        
-        var j = i
-        while low < j:
-            sequence[j] = sequence[j - 1];
-            j -= 1
-        sequence[j] = key
+        binary_median_helper(sequence, start, pivot, cutoff - 1)
+        binary_median_helper(sequence, pivot + 1, stop, cutoff - 1)
 
 
 # MEDIAN OF THREE IMPLEMENTATION
 proc median_intro_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    median_helper(sequence, 0, size, depth_limit(size))
+    median_intro_sort_sub(sequence, 0, sequence.len)
+
+proc median_intro_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    median_helper(sequence, start, stop, depth_limit(stop - start))
 
 proc median_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): void =    
     if stop - start < INSERTION_LIMIT:
-        insertion_sort(sequence, start, stop)
+        standard_insertion_sort_sub(sequence, start, stop)
     elif cutoff == 0:
-        heap_sort(sequence, start, stop)
+        iterative_heap_sort_sub(sequence, start, stop)
     else:
-        let pivot = median_partition(sequence, start, stop - 1)
+        move_median_of_three_to_end(sequence, start, stop - 1)
+        
+        let pivot = partition(sequence, start, stop - 1)
         
         median_helper(sequence, start, pivot, cutoff - 1)
         median_helper(sequence, pivot + 1, stop, cutoff - 1)
 
-proc median_partition(sequence: var seq[int], low: int, high: int): int {.inline.} =
-    let pivot = median_of_three_pivot(sequence, low, high)
-    var i = low
-    for j in low ..< high:
-        if sequence[j] < pivot:
-            swap(sequence[i], sequence[j])
-            i += 1
-    swap(sequence[i], sequence[high])
-    return i
-
-proc median_of_three_pivot(sequence: var seq[int], low: int, high: int): int {.inline.} =
-    let middle = (low + high) div 2
-    if sequence[middle] < sequence[low]:
-        swap(sequence[low], sequence[middle])
-    if sequence[high] < sequence[low]:
-        swap(sequence[low], sequence[high])
-    if sequence[middle] < sequence[high]:
-        swap(sequence[middle], sequence[high])
-    return sequence[high]
-
 
 # BINARY SEARCH MEDIAN OF THREE IMPLEMENTATION
 proc binary_median_intro_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    binary_median_helper(sequence, 0, size, depth_limit(size))
+    binary_median_intro_sort_sub(sequence, 0, sequence.len)
+
+proc binary_median_intro_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    binary_median_helper(sequence, start, stop, depth_limit(stop - start))
 
 proc binary_median_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): void =    
     if stop - start < INSERTION_LIMIT:
-        binary_insertion_sort(sequence, start, stop)
+        binary_insertion_sort_sub(sequence, start, stop)
     elif cutoff == 0:
-        heap_sort(sequence, start, stop)
+        iterative_heap_sort_sub(sequence, start, stop)
     else:
-        let pivot = median_partition(sequence, start, stop - 1)
+        move_median_of_three_to_end(sequence, start, stop - 1)
+        
+        let pivot = partition(sequence, start, stop - 1)
         
         binary_median_helper(sequence, start, pivot, cutoff - 1)
         binary_median_helper(sequence, pivot + 1, stop, cutoff - 1)

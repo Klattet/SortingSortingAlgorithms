@@ -14,16 +14,16 @@ const algos = [
     #("Standard bubble sort", standard_bubble_sort),
     #("Optimised bubble sort", optimised_bubble_sort),
     
-    #("Recursive heap sort", recursive_heap_sort),
-    #("Iterative heap sort", iterative_heap_sort),
+    ("Recursive heap sort", recursive_heap_sort),
+    ("Iterative heap sort", iterative_heap_sort),
     
     #("Standard insertion sort", standard_insertion_sort),
     #("Binary insertion sort", binary_insertion_sort),
     
-    ("Standard intro sort", standard_intro_sort),
-    ("Binary intro sort", binary_intro_sort),
-    ("Median of three intro sort", median_intro_sort),
-    ("Binary search median of three intro sort", binary_median_intro_sort),
+    #("Standard intro sort", standard_intro_sort),
+    #("Binary intro sort", binary_intro_sort),
+    #("Median of three intro sort", median_intro_sort),
+    #("Binary search median of three intro sort", binary_median_intro_sort),
     
     #("Standard quick sort", standard_quick_sort),
     #("Median of three quick sort", median_quick_sort),

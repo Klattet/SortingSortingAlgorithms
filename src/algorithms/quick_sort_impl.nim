@@ -33,6 +33,8 @@
 # STANDARD IMPLEMENTATION
 # Chooses the last element in the unsorted section as the pivot.
 proc standard_quick_sort*(sequence: var seq[int]): void =
+
+proc standard_quick_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
     standard_helper(sequence, 0, sequence.len - 1)
 
 proc standard_helper(sequence: var seq[int], low: int, high: int): void =

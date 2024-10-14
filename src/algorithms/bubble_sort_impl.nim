@@ -30,13 +30,18 @@
 #
 
 
+{.experimental: "codeReordering".}
+
+
 # NAIVE IMPLEMENTATION
 # The simplest version of the algorithm.
 # It loops (n * (n - 1)) times every time.
 proc naive_bubble_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    for i in 0 ..< size:
-        for j in 1 ..< size:
+    naive_bubble_sort_sub(sequence, 0, sequence.len)
+
+proc naive_bubble_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    for i in start ..< stop:
+        for j in start + 1 ..< stop:
             if sequence[j - 1] > sequence[j]:
                 swap(sequence[j - 1], sequence[j])
 
@@ -47,9 +52,11 @@ proc naive_bubble_sort*(sequence: var seq[int]): void =
 # Thus unlike the naive implementation, we simply skip iterating over the sorted section.
 # This effectively halves the number of comparisons, (n * (n - 1) / 2).
 proc standard_bubble_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    for i in 0 ..< size:
-        for j in 1 ..< size - i:
+    standard_bubble_sort_sub(sequence, 0, sequence.len)
+
+proc standard_bubble_sort_sub(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    for i in start ..< stop:
+        for j in start + 1 ..< stop - i:
             if sequence[j - 1] > sequence[j]:
                 swap(sequence[j - 1], sequence[j])
 
@@ -60,10 +67,12 @@ proc standard_bubble_sort*(sequence: var seq[int]): void =
 # For totally random data, if comparisons are cheap, the extra overhead may lead to worse performance.
 # However, pointless comparsions are skipped for sorted or approximately sorted lists.
 proc optimised_bubble_sort*(sequence: var seq[int]): void =
-    let size = sequence.len
-    for i in 0 ..< size:
+    optimised_bubble_sort_sub(sequence, 0, sequence.len)
+
+proc optimised_bubble_sort_sub*(sequence: var seq[int], start: int, stop: int): void =
+    for i in start ..< stop:
         var flag = true
-        for j in 1 ..< size - i:
+        for j in start + 1 ..< stop - i:
             if sequence[j - 1] > sequence[j]:
                 swap(sequence[j - 1],sequence[j])
                 flag = false

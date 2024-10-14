@@ -31,10 +31,16 @@
 #
 
 
+{.experimental: "codeReordering".}
+
+
 # STANDARD IMPLEMENTATION
 # The most common implementation.
 proc standard_insertion_sort*(sequence: var seq[int]): void =
-    for i in 1 ..< sequence.len:
+    standard_insertion_sort_sub(sequence, 0, sequence.len)
+
+proc standard_insertion_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    for i in start + 1 ..< stop:
         let key = sequence[i]
         
         # Move to correct position.
@@ -49,7 +55,10 @@ proc standard_insertion_sort*(sequence: var seq[int]): void =
 # Unlike the standard implementation, this version avoids unnecessary comparisons by taking advantage of the fact that the section where elements get inserted is sorted.
 # That means it is possible to use binary search to locate the correct position for the element.
 proc binary_insertion_sort*(sequence: var seq[int]): void =
-    for i in 1 ..< sequence.len:
+    binary_insertion_sort_sub(sequence, 0, sequence.len)
+
+proc binary_insertion_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    for i in start + 1 ..< stop:
         let key = sequence[i]
         
         # Binary search for destination.
