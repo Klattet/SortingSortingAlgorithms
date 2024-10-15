@@ -33,9 +33,10 @@
 # STANDARD IMPLEMENTATION
 # Chooses the last element in the unsorted section as the pivot.
 proc standard_quick_sort*(sequence: var seq[int]): void =
+  standard_quick_sort_sub(sequence, 0, sequence.len)
 
 proc standard_quick_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
-    standard_helper(sequence, 0, sequence.len - 1)
+    standard_helper(sequence, start, stop - 1)
 
 proc standard_helper(sequence: var seq[int], low: int, high: int): void =
     if low < high:
@@ -62,7 +63,10 @@ proc standard_partition(sequence: var seq[int], low: int, high: int): int {.inli
 # MEDIAN OF THREE IMPLEMENTATION
 # Chooses the last element in the unsorted section as the pivot.
 proc median_quick_sort*(sequence: var seq[int]): void =
-    median_helper(sequence, 0, sequence.len - 1)
+    median_quick_sort_sub(sequence, 0, sequence.len)
+
+proc median_quick_sort_sub*(sequence: var seq[int], start: int, stop: int): void {.inline.} =
+    median_helper(sequence, start, stop - 1)
 
 proc median_helper(sequence: var seq[int], low: int, high: int): void =
     if low < high:

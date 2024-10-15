@@ -81,8 +81,8 @@ proc binary_helper(sequence: var seq[int], start: int, stop: int, cutoff: int): 
     else:        
         let pivot = partition(sequence, start, stop - 1)
         
-        binary_median_helper(sequence, start, pivot, cutoff - 1)
-        binary_median_helper(sequence, pivot + 1, stop, cutoff - 1)
+        binary_helper(sequence, start, pivot, cutoff - 1)
+        binary_helper(sequence, pivot + 1, stop, cutoff - 1)
 
 
 # MEDIAN OF THREE IMPLEMENTATION
